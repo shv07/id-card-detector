@@ -101,13 +101,15 @@ im_width, im_height = shape[1], shape[0]
 (left, right, top, bottom) = (xmin * im_width, xmax * im_width, ymin * im_height, ymax * im_height)
 
 # Using Image to crop and save the extracted copied image
-im = Image.open(image_path)
+#im = Image.open(image_path)
+im = Image.open(PATH_TO_IMAGE)
+output_path = "./static/result.png"
 im.crop((left, top, right, bottom)).save(output_path, quality=95)
 
 cv2.imshow('ID-CARD-DETECTOR : ', image)
 
-image_cropped = cv2.imread(output_path)
-cv2.imshow("ID-CARD-CROPPED : ", image_cropped)
+#image_cropped = cv2.imread(output_path)
+#cv2.imshow("ID-CARD-CROPPED : ", image_cropped)
 
 # All the results have been drawn on image. Now display the image.
 cv2.imshow('ID CARD DETECTOR', image)
