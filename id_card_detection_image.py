@@ -17,7 +17,7 @@ from utils import visualization_utils as vis_util
 
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'model'
-IMAGE_NAME = 'test_images/image1.png'
+IMAGE_NAME = 'static/cell-phones.png'
 
 # Grab path to current working directory
 CWD_PATH = os.getcwd()
@@ -76,6 +76,8 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 # expand image dimensions to have shape: [1, None, None, 3]
 # i.e. a single-column array, where each item in the column has the pixel RGB value
 image = cv2.imread(PATH_TO_IMAGE)
+image1 = cv2.imread(PATH_TO_IMAGE)
+
 image_expanded = np.expand_dims(image, axis=0)
 
 # Perform the actual detection by running the model with the image as input
@@ -100,6 +102,20 @@ shape = np.shape(image)
 im_width, im_height = shape[1], shape[0]
 (left, right, top, bottom) = (xmin * im_width, xmax * im_width, ymin * im_height, ymax * im_height)
 
+boxes1, scores1 = np.squeeze(boxes), np.squeeze(scores)
+
+result_boxes = [tuple([tuple(boxes1[i].tolist()), scores1[i]]) for i in range(boxes1.shape[0]) if scores1[i]>0.60]
+
+result_boxes1 = []
+
+for box, score in result_boxes:
+    ymin, xmin, ymax, xmax = box
+    ymin, xmin, ymax, xmax = int(ymin* im_height), int(xmin * im_width), int(ymax* im_height), int(xmax * im_width)
+    result_boxes1.append(tuple(tuple([xmin, ymin, xmax-xmin, ymax-ymin])))
+    
+#result_boxes = [tuple([tuple([box[1]* im_width, box[0]* im_height, box[3]* im_width - box[1]* im_width, box[2]-box[0]]), score]) for box, score in result_boxes]
+cv2.imshow("tmp", cv2.rectangle(image1,(int(xmin* im_width), int(ymin* im_height)), (int(xmax* im_width), int(ymax* im_height)), (255, 255, 255), 5 ))
+
 # Using Image to crop and save the extracted copied image
 #im = Image.open(image_path)
 im = Image.open(PATH_TO_IMAGE)
@@ -108,8 +124,8 @@ im.crop((left, top, right, bottom)).save(output_path, quality=95)
 
 cv2.imshow('ID-CARD-DETECTOR : ', image)
 
-#image_cropped = cv2.imread(output_path)
-#cv2.imshow("ID-CARD-CROPPED : ", image_cropped)
+image_cropped = cv2.imread(output_path)
+cv2.imshow("ID-CARD-CROPPED : ", image_cropped)
 
 # All the results have been drawn on image. Now display the image.
 cv2.imshow('ID CARD DETECTOR', image)
