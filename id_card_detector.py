@@ -117,32 +117,36 @@ def DetectIdentityCard(image_b64:str):
             ymin, xmin, ymax, xmax = int(ymin* im_height), int(xmin * im_width), int(ymax* im_height), int(xmax * im_width)
             result_boxes1.append(tuple([tuple([xmin, ymin, xmax-xmin, ymax-ymin]), score]))
 
-        # try getting the score too
         return result_boxes1
-
-
     return None
 
+def DetectIdentityCardsCount(imageB64:str)->int:
+    if imageB64==None or imageB64=="":
+        return 0
+    boxes = DetectIdentityCard(imageB64)
+    return 0 if boxes==None else len(boxes)
+
 #test
-import base64
+if __name__=="__main__":
+    import base64
 
-testImg = './static/cell-phones.png'
+    testImg = './static/cell-phones.png'
 
-with open(testImg, "rb") as image_file:
-    encoded_string = base64.b64encode(image_file.read())
+    with open(testImg, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
 
-boxes = DetectIdentityCard(encoded_string)
+    boxes = DetectIdentityCard(encoded_string)
 
-image = cv2.imread(testImg)
+    image = cv2.imread(testImg)
 
-for box,score in boxes:
-    x,y,w,h = box
-    image = cv2.rectangle(image, (x,y), (x+w, y+h), (255, 0, 0), 5)
+    for box,score in boxes:
+        x,y,w,h = box
+        image = cv2.rectangle(image, (x,y), (x+w, y+h), (255, 0, 0), 5)
 
-cv2.imshow("Result", image)
+    cv2.imshow("Result", image)
 
-# Press any key to close the image
-cv2.waitKey(0)
+    # Press any key to close the image
+    cv2.waitKey(0)
 
-# Clean up
-cv2.destroyAllWindows()
+    # Clean up
+    cv2.destroyAllWindows()
